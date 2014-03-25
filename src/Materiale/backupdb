@@ -1,0 +1,47 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+CREATE SCHEMA IF NOT EXISTS `gnutella` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `gnutella` ;
+
+-- -----------------------------------------------------
+-- Table `gnutella`.`file`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `gnutella`.`file` (
+  `fileid` INT NOT NULL DEFAULT 0 ,
+  `filemd5` CHAR(16) NOT NULL ,
+  `filename` CHAR(100) NOT NULL ,
+  PRIMARY KEY (`fileid`) ,
+  UNIQUE INDEX `id_UNIQUE` (`fileid` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `gnutella`.`near`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `gnutella`.`near` (
+  `nearid` INT NOT NULL AUTO_INCREMENT ,
+  `ipp2p` CHAR(39) NOT NULL ,
+  `pp2p` CHAR(5) NOT NULL ,
+  PRIMARY KEY (`nearid`) ,
+  UNIQUE INDEX `id_UNIQUE` (`nearid` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `gnutella`.`packet`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `gnutella`.`packet` (
+  `packetid` INT NOT NULL AUTO_INCREMENT ,
+  `created_at` TIMESTAMP NULL ,
+  PRIMARY KEY (`packetid`) ,
+  UNIQUE INDEX `id_UNIQUE` (`packetid` ASC) )
+ENGINE = InnoDB;
+
+USE `gnutella` ;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
