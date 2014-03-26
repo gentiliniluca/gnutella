@@ -2,6 +2,7 @@ import string
 import random
 
 class Packet:
+    
     def __init__(self, packetid, created_at):
         self.packetid = packetid
         self.created_at = created_at
@@ -19,7 +20,6 @@ class Packet:
 #        pass
     
     def delete(self, database):
-        
         database.execute("""DELETE FROM packet
                             WHERE packetid = %s""",
                             (self.packetid))
