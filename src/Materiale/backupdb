@@ -33,8 +33,8 @@ ENGINE = InnoDB;
 -- Table `gnutella`.`packet`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `gnutella`.`packet` (
-  `packetid` INT NOT NULL AUTO_INCREMENT ,
-  `created_at` TIMESTAMP NULL ,
+  `packetid` CHAR(16) NOT NULL ,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ,
   PRIMARY KEY (`packetid`) ,
   UNIQUE INDEX `id_UNIQUE` (`packetid` ASC) )
 ENGINE = InnoDB;
