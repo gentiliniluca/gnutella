@@ -3,25 +3,40 @@ import socket
 import os
 import sys
 import subprocess, signal
+import Packet
 
-def visualizza_menu():
+def visualizza_menu_principale():
     print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  0 - Fine            *\n************************")
     out=raw_input("\n\tOperazione scelta: ")
     return out
+
+def adattaStringa(lunghezzaFinale, stringa):
+    ritorno=stringa
+    for i in range(len(stringa), lunghezzaFinale):
+        ritorno="0"+ritorno
+    return ritorno
 
 
 host = "::1"
 porta = 3000
 size = 1024
+ttl = 2
 
 print ("Avvio Directory distribuito")
 pid=os.fork()
 if(pid==0): #figlio per gestire operazioni menu
     operazione_utente=1
     while(int(operazione_utente)!=0):
-        operazione_utente=visualizza_menu()
+        operazione_utente=visualizza_menu_principale()
         print("valore: "+ operazione_utente)
-        
+
+        #operazione ricerca vicini
+        if(int(operazione_utente)==2):
+            #pkt= istanza pkt x la ricerca dei vicini
+            stringa="NEAR"+"0123456789abcdef"+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl)) 
+            print("valore inviato: "+stringa)
+             
+            
     print("fine operazioni utente")
     os.kill(os.getppid(), signal.SIGKILL)
         
