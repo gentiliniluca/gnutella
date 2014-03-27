@@ -48,10 +48,10 @@ if(pid==0): #figlio per gestire operazioni menu
             #lettura vicini da db
             conn_db=Connessione.Connessione()
             vicini= []
-            vicini = NearService.NearService.getNears(conn_db.crea_cursore(), pkt.packetid)
+            vicini = NearService.NearService.getNears(conn_db.crea_cursore())
             i=0
             while i < len(vicini):
-                print ("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
+                #print ("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
                 sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                 sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
                 sock.send(stringa_da_trasmettere.encode())
@@ -78,8 +78,13 @@ else: #gestisco funzionalita server
         if(newpid==0):
             try:
                 s.close()
+        #pulizia pkt vecchi da 300 s
+                conn_db=Connessione.Connessione()
+                PacketService.PacketService.deleteExpiredPacket(conn_db.crea_cursore())
+                conn_db.esegui_commit()
+                conn_db.chiudi_connessione()
+        #fine pulizia pkt vecchi
                 
-
                 stringa_ricevuta_server = client.recv(size)
                 print("\t\t\t\t\t\t\t\t\tlato server ho ricevuto: "+stringa_ricevuta_server)
                 if stringa_ricevuta_server== "":
@@ -101,21 +106,21 @@ else: #gestisco funzionalita server
                     try:
                         pkt=PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
                     except:
-                        print ("pkt non presente , se ttl >0 invio")
+                        print ("\t\t\t\t\t\t\t\t\tpkt non presente , se ttl >0 invio")
                         if(ttl>0):
-                            #inserisco su db e invio a vicini tranne mittente
+                            # invio a vicini tranne mittente
                             vicini= []
-                            vicini = NearService.NearService.getNears(conn_db.crea_cursore(), pktid)
+                            vicini = NearService.NearService.getNears(conn_db.crea_cursore())
                             i=0
                             while i < len(vicini):
                                 if(vicini[i].ipp2p!=ipp2p and vicini[i].pp2p!=pp2p):
-                                    print ("inoltro near a vicini****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
+                                    print ("\t\t\t\t\t\t\t\t\tinoltro near a vicini****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
                                     sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                                     sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
                                     sock.send(stringa_ricevuta_server.encode())
                                 i = i+1
                             stringa_risposta="ANEA"+pktid+host+adattaStringa(5,str(porta))
-                            #print(stringa_risposta)
+                            print("\t\t\t\t\t\t\t\t\trispondo con "+stringa_risposta)
                             
                             sockr = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                             sockr.connect((ipp2p, int(pp2p)) )
@@ -132,9 +137,18 @@ else: #gestisco funzionalita server
                     ipp2p=stringa_ricevuta_server[20:58]
                     pp2p=stringa_ricevuta_server[58:63]
                     print ("\t\t\t\t\t\t\t\t\tOperazione Near pktid: "+pktid+" ip: "+ ipp2p +" porta: " +pp2p)
-
+                    #inserisco su db il vicino con ipp2p e porta
+                    
+                    try:
+                        conn_db=Connessione.Connessione()
+                        vicino=NearService.NearService.insertNewNear(conn_db.crea_cursore(), ipp2p,pp2p)
+                    except:
+                        print("\t\t\t\t\t\t\t\t\tInserimento di vicino non effettuato")
+                    finally:
+                        conn_db.esegui_commit()
+                        conn_db.chiudi_connessione()
+                    
         
-
 
             except Exception as e: 
                 print e
