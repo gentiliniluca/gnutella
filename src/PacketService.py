@@ -1,7 +1,7 @@
 import Packet
 
 class PacketService:
-    
+    global EXPIREDTIME 
     EXPIREDTIME = 300
     
     @staticmethod
