@@ -90,15 +90,15 @@ else: #gestisco funzionalita server
                 if stringa_ricevuta_server== "":
                     print("\t\t\t\t\t\t\t\t\t\t\t\tsocket vuota")
                     break
-                print("\t\t\t\t\t\t\t\t\tMESSAGGIO RICEVUTO:" )
+                print("\n\t\t\t\t\t\t\t\t\tMESSAGGIO RICEVUTO:" )
                 operazione=stringa_ricevuta_server[0:4]
 
         #operazione NEAR
                 if operazione.upper()=="NEAR":
                     pktid=stringa_ricevuta_server[4:20]
-                    ipp2p=stringa_ricevuta_server[20:58]
-                    pp2p=stringa_ricevuta_server[58:63]
-                    ttl=stringa_ricevuta_server[63:65]
+                    ipp2p=stringa_ricevuta_server[20:59]
+                    pp2p=stringa_ricevuta_server[59:64]
+                    ttl=stringa_ricevuta_server[64:66]
                     print ("\t\t\t\t\t\t\t\t\tOperazione Near pktid: "+pktid+" ip: "+ ipp2p +" porta: " +pp2p+ " ttl: "+ttl)
 
                     ttl=int(ttl)-1
@@ -134,9 +134,9 @@ else: #gestisco funzionalita server
         #operazione ANEA
                 if operazione.upper()=="ANEA":
                     pktid=stringa_ricevuta_server[4:20]
-                    ipp2p=stringa_ricevuta_server[20:58]
-                    pp2p=stringa_ricevuta_server[58:63]
-                    print ("\t\t\t\t\t\t\t\t\tOperazione Near pktid: "+pktid+" ip: "+ ipp2p +" porta: " +pp2p)
+                    ipp2p=stringa_ricevuta_server[20:59]
+                    pp2p=stringa_ricevuta_server[59:64]
+                    print ("\t\t\t\t\t\t\t\t\tOperazione Anea pktid: "+pktid+" ip: "+ ipp2p +" porta: " +pp2p)
                     #inserisco su db il vicino con ipp2p e porta
                     
                     try:
