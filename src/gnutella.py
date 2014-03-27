@@ -42,9 +42,9 @@ if(pid==0): #figlio per gestire operazioni menu
             pkt= PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
             conn_db.esegui_commit()
             conn_db.chiudi_connessione()
-             
+            ttl=2
             stringa_da_trasmettere="NEAR"+pkt.packetid+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl)) 
-            print("valore inviato: "+stringa_da_trasmettere)
+            #print("valore inviato: "+stringa_da_trasmettere)
             #lettura vicini da db
             conn_db=Connessione.Connessione()
             vicini= []
@@ -62,7 +62,7 @@ if(pid==0): #figlio per gestire operazioni menu
             
                      
     print("fine operazioni utente")
-    #pulisco DB
+    #pulisco DB quando esco
     os.kill(os.getppid(), signal.SIGKILL)
         
     
@@ -107,7 +107,7 @@ else: #gestisco funzionalita server
                         pkt=PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
                     except:
                         print ("\t\t\t\t\t\t\t\t\tpkt non presente , se ttl >0 invio")
-                        if(ttl>0):
+                        if(ttl>=0):
                             # invio a vicini tranne mittente
                             vicini= []
                             vicini = NearService.NearService.getNears(conn_db.crea_cursore())
@@ -117,6 +117,7 @@ else: #gestisco funzionalita server
                                     print ("\t\t\t\t\t\t\t\t\tinoltro near a vicini****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
                                     sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                                     sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
+                                    stringa_ricevuta_server="NEAR"+pktid+ipp2p+adattaStringa(5, str(pp2p))+adattaStringa(2,str(ttl))
                                     sock.send(stringa_ricevuta_server.encode())
                                 i = i+1
                             stringa_risposta="ANEA"+pktid+host+adattaStringa(5,str(porta))
@@ -155,6 +156,7 @@ else: #gestisco funzionalita server
                 print("\t\t\t\t\t\t\t\t\tErrore ricezione lato server")
             finally:
                 client.close() 
+                stringa_ricevuta_server=""
                 os._exit(0) 
                 
         else:
