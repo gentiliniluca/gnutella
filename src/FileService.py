@@ -3,6 +3,12 @@ import File
 class FileService:
     
     @staticmethod
+    def insertNewFile(database, filemd5, filename):
+        file = File.File(None, filemd5, filename)
+        file.insert(database)
+        return file
+    
+    @staticmethod
     def getFiles(database, searchString):
         
         searchString = "%" + searchString.upper() + "%"
