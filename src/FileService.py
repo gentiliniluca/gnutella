@@ -4,8 +4,27 @@ class FileService:
     
     @staticmethod
     def insertNewFile(database, filemd5, filename):
-        file = File.File(None, filemd5, filename)
-        file.insert(database)
+        
+        try:
+            file = FileService.getFile(database, filename)
+        except:
+            file = File.File(None, filemd5, filename)
+            file.insert(database)
+        
+        return file
+    
+    @staticmethod
+    def getFile(database, filename):
+        
+        database.execute("""SELECT fileid, filemd5, filename
+                            FROM file
+                            WHERE filename = %s""",
+                            (filename))
+        
+        fileid, filemd5, filename = database.fetchone()
+        
+        file = File.File(fileid, filemd5, filename)
+        
         return file
     
     @staticmethod

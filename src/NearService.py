@@ -4,12 +4,31 @@ class NearService:
     
     @staticmethod
     def insertNewNear(database, ipp2p, pp2p):
-        near = Near.Near(None, ipp2p, pp2p)
-        near.insert(database)
+        
+        try:
+            near = NearService.getNear(database, ipp2p, pp2p)
+        except:
+            near = Near.Near(None, ipp2p, pp2p)
+            near.insert(database)
+        
         return near
     
     @staticmethod
-    def getNears(database, packetid):
+    def getNear(database, ipp2p, pp2p):
+        
+        database.execute("""SELECT nearid, ipp2p, pp2p
+                            FROM near
+                            WHERE ipp2p = %s AND pp2p = %s""",
+                            (ipp2p, pp2p))
+        
+        nearid, ipp2p, pp2p = database.fetchone()
+        
+        near = Near.Near(nearid, ipp2p, pp2p)
+        
+        return near
+    
+    @staticmethod
+    def getNears(database):
         
         database.execute("""SELECT nearid, ipp2p, pp2p
                             FROM near""")
