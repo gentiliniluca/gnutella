@@ -43,13 +43,15 @@ if(pid==0): #figlio per gestire operazioni menu
             conn_db.esegui_commit()
             conn_db.chiudi_connessione()
              
-            stringa="NEAR"+pkt.packetid+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl)) 
-            print("valore inviato: "+stringa)
+            stringa_da_trasmettere="NEAR"+pkt.packetid+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl)) 
+            print("valore inviato: "+stringa_da_trasmettere)
             #lettura vicini da db
             vicini= NearService.NearService.getNears(conn_db.crea_cursore(), pkt.packetid)
             for vicino in vicini:
                 sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-                sock.connect((HOST, PORTA))
+                sock.connect((vicino.ipp2p, vicino.pp2p))
+                sock.send(stringa_da_trasmettere.encode())
+                
                 
             
              
