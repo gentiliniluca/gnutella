@@ -42,7 +42,7 @@ class NearService:
                 nears.append(near)
         except:
             pass
-        
+                
         return nears
     
     @staticmethod
