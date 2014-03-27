@@ -1,16 +1,22 @@
 import Near
+import DBException
 
 class NearService:
+    
+    global MAXNEARS 
+    MAXNEARS = 3
     
     @staticmethod
     def insertNewNear(database, ipp2p, pp2p):
         
         try:
             near = NearService.getNear(database, ipp2p, pp2p)
-        except:
-            near = Near.Near(None, ipp2p, pp2p)
-            near.insert(database)
-        
+        except:            
+            if NearService.getNearsCount(database) < MAXNEARS:
+                near = Near.Near(None, ipp2p, pp2p)
+                near.insert(database)
+            else:
+                raise DBException.DBException("Max nears number reached!")        
         return near
     
     @staticmethod
@@ -49,5 +55,5 @@ class NearService:
     def getNearsCount(database):
         database.execute("""SELECT count(*)
                             FROM near""")
-        count = database.fetchone()
+        count, = database.fetchone()
         return count
