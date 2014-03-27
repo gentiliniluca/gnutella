@@ -4,6 +4,12 @@ import os
 import sys
 import subprocess, signal
 import Packet
+import PacketService
+import File
+import FileService
+import Connessione
+import Near
+import NearService
 
 def visualizza_menu_principale():
     print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  0 - Fine            *\n************************")
@@ -29,12 +35,23 @@ if(pid==0): #figlio per gestire operazioni menu
     while(int(operazione_utente)!=0):
         operazione_utente=visualizza_menu_principale()
         print("valore: "+ operazione_utente)
-
+        
         #operazione ricerca vicini
         if(int(operazione_utente)==2):
-            #pkt= istanza pkt x la ricerca dei vicini
-            stringa="NEAR"+"0123456789abcdef"+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl)) 
+            conn_db=Connessione.Connessione()
+            pkt= PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
+             
+            stringa="NEAR"+pkt.packetid+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl)) 
             print("valore inviato: "+stringa)
+            #lettura vicini da db
+            vicini= NearService.NearService.getNears(conn_db.crea_cursore(), pkt.packetid)
+            for vicino in vicini:
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                sock.connect((HOST, PORTA))
+                
+            
              
             
     print("fine operazioni utente")
