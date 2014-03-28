@@ -16,6 +16,13 @@ def visualizza_menu_principale():
     out=raw_input("\n\tOperazione scelta: ")
     return out
 
+def aggiungi_spazi_finali(stringa):
+    i=len(stringa)
+    while i<20:
+        stringa=stringa+' '
+        i=i+1
+    return stringa
+
 def adattaStringa(lunghezzaFinale, stringa):
     ritorno=stringa
     for i in range(len(stringa), lunghezzaFinale):
@@ -23,7 +30,7 @@ def adattaStringa(lunghezzaFinale, stringa):
     return ritorno
 
 
-host = "fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
+host = "::1" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
 porta = 3331
 size = 1024
 ttl = 2
@@ -35,6 +42,44 @@ if(pid==0): #figlio per gestire operazioni menu
     while(int(operazione_utente)!=0):
         operazione_utente=visualizza_menu_principale()
         print("valore: "+ operazione_utente)
+        
+        #operazione ricerca
+        
+        if(int(operazione_utente)==1):
+            
+            while True:
+                query_ricerca=raw_input("\n\tInserire la stringa di ricerca (massimo 20 caratteri): ")
+                if(len(query_ricerca)<=20):
+                    break
+                print("\n\tErrore lunghezza query maggiore di 20!")
+            
+            query_ricerca=aggiungi_spazi_finali(query_ricerca)
+            print(query_ricerca)    
+            
+            
+            conn_db=Connessione.Connessione()
+            pkt= PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
+            ttl=2
+            stringa_da_trasmettere="QUER"+pkt.packetid+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl))+query_ricerca
+            
+            #print("stringa inviata dal client"+stringa_da_trasmettere)
+            
+            conn_db=Connessione.Connessione()
+            vicini= []
+            vicini = NearService.NearService.getNears(conn_db.crea_cursore())
+            i=0
+            while i < len(vicini):
+                #print ("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
+                sock.send(stringa_da_trasmettere.encode())
+                i = i+1
+                
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
+            
         
         #operazione ricerca vicini
         if(int(operazione_utente)==2):
