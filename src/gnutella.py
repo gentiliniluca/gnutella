@@ -268,6 +268,16 @@ else: #gestisco funzionalita server
                         
         
         #fine operazione QUER
+        
+        
+        #operazione AQUE
+                if operazione.upper()=="AQUE":
+                    print("")
+        
+        
+        
+        
+        #fine operazione AQUE
          
         
 
@@ -284,6 +294,3 @@ else: #gestisco funzionalita server
     
     print("Terminato parte server")
             
-                    
-
-
