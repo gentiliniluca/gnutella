@@ -53,7 +53,7 @@ def elimina_spazi_iniziali_finali(stringa):
 
     return ritorno2[::-1]
 
-host = "0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
+host = "fd00:0000:0000:0000:7908:2399:b931:4f57"#"0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
 porta = 3331
 size = 1024
 ttl = 2
@@ -226,8 +226,8 @@ else: #gestisco funzionalita server
                     ipp2p=stringa_ricevuta_server[20:59]
                     pp2p=stringa_ricevuta_server[59:64]
                     ttl=stringa_ricevuta_server[64:66]
-                    ricerca_con_spazi=stringa_ricevuta_srever[66:86]
-                    ricerca=elimina_spazi_iniziali_finali(stringa_ricevuta_srever[66:86])
+                    ricerca_con_spazi=stringa_ricevuta_server[66:86]
+                    ricerca=elimina_spazi_iniziali_finali(stringa_ricevuta_server[66:86])
                     ttl=int(ttl)-1
                     conn_db=Connessione.Connessione()
                     try:
@@ -246,11 +246,12 @@ else: #gestisco funzionalita server
                                 sock.connect((ipp2p, int(pp2p)) )
                                 sock.send(stringa_risposta) #attenzione enconde
                                 sock.close()
+                                i=i+1
 
                             conn_db.esegui_commit()
                             conn_db.chiudi_connessione()
 
-
+                            conn_db=Connessione.Connessione()
                             vicini= []
                             vicini = NearService.NearService.getNears(conn_db.crea_cursore())
                             i=0
