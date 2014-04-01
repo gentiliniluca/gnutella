@@ -12,8 +12,13 @@ import Near
 import NearService
 
 def visualizza_menu_principale():
-    print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  0 - Fine            *\n************************")
-    out=raw_input("\n\tOperazione scelta: ")
+    
+    while True:
+        print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  3 - Carica File     *\n*  0 - Fine            *\n************************")
+        out=raw_input("\n\tOperazione scelta: ")
+        if(int(out)>=0 and int(out)<=3):
+            break
+        print("Valore inserito errato! (valore compreso tra 0 e 3)")
     return out
 
 def aggiungi_spazi_finali(stringa):
@@ -30,7 +35,7 @@ def adattaStringa(lunghezzaFinale, stringa):
     return ritorno
 
 
-host = "::1" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
+host = "0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
 porta = 3331
 size = 1024
 ttl = 2
@@ -64,7 +69,7 @@ if(pid==0): #figlio per gestire operazioni menu
             ttl=2
             stringa_da_trasmettere="QUER"+pkt.packetid+host+""+adattaStringa(5,str(porta))+adattaStringa(2,str(ttl))+query_ricerca
             
-            #print("stringa inviata dal client"+stringa_da_trasmettere)
+            #print("stringa inviata dal client: "+stringa_da_trasmettere)
             
             conn_db=Connessione.Connessione()
             vicini= []
