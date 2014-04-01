@@ -226,6 +226,7 @@ else: #gestisco funzionalita server
                     ipp2p=stringa_ricevuta_server[20:59]
                     pp2p=stringa_ricevuta_server[59:64]
                     ttl=stringa_ricevuta_server[64:66]
+                    ricerca_con_spazi=stringa_ricevuta_srever[66:86]
                     ricerca=elimina_spazi_iniziali_finali(stringa_ricevuta_srever[66:86])
                     ttl=int(ttl)-1
                     conn_db=Connessione.Connessione()
@@ -258,7 +259,7 @@ else: #gestisco funzionalita server
                                     print ("\t\t\t\t\t\t\t\t\tinoltro QUER a vicini****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
                                     sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                                     sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
-                                    stringa_ricevuta_server="QUER"+pktid+ipp2p+adattaStringa(5, str(pp2p))+adattaStringa(2,str(ttl))
+                                    stringa_ricevuta_server="QUER"+pktid+ipp2p+adattaStringa(5, str(pp2p))+adattaStringa(2,str(ttl))+ricerca_con_spazi
                                     sock.send(stringa_ricevuta_server.encode())
                                     #chiudere socket????? sock.cloese()
                                 i = i+1
@@ -272,7 +273,7 @@ else: #gestisco funzionalita server
         
         #operazione AQUE
                 if operazione.upper()=="AQUE":
-                    print("")
+                    print(stringa_ricevuta_server)
         
         
         
