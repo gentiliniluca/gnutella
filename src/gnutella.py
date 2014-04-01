@@ -34,6 +34,24 @@ def adattaStringa(lunghezzaFinale, stringa):
         ritorno="0"+ritorno
     return ritorno
 
+def elimina_spazi_iniziali_finali(stringa):
+    ritorno=""
+    ritorno2=""
+    lettera=False
+    lettera2=False
+    for i in range (0,len(stringa)):
+        if(stringa[i]!=" " or lettera==True):
+            ritorno=ritorno+stringa[i]
+            lettera = True
+   
+    ritorno= ritorno[::-1]   
+
+    for i in range (0,len(ritorno)):
+        if(ritorno[i]!=" " or lettera2==True):
+            ritorno2=ritorno2+ritorno[i]
+            lettera2 = True
+
+    return ritorno2[::-1]
 
 host = "0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
 porta = 3331
@@ -169,6 +187,7 @@ else: #gestisco funzionalita server
                                     sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
                                     stringa_ricevuta_server="NEAR"+pktid+ipp2p+adattaStringa(5, str(pp2p))+adattaStringa(2,str(ttl))
                                     sock.send(stringa_ricevuta_server.encode())
+                                    #chiudere socket????? sock.cloese()
                                 i = i+1
                             stringa_risposta="ANEA"+pktid+host+adattaStringa(5,str(porta))
                             print("\t\t\t\t\t\t\t\t\trispondo con "+stringa_risposta)
@@ -176,6 +195,7 @@ else: #gestisco funzionalita server
                             sockr = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                             sockr.connect((ipp2p, int(pp2p)) )
                             sockr.send(stringa_risposta.encode())
+                            sockr.close()
                             
                     finally:
                         conn_db.esegui_commit()
@@ -198,7 +218,57 @@ else: #gestisco funzionalita server
                     finally:
                         conn_db.esegui_commit()
                         conn_db.chiudi_connessione()
-                    
+        #fine operazione ANEA
+        
+        #operazione QUER
+                if operazione.upper()=="QUER":
+                    pktid=stringa_ricevuta_server[4:20]
+                    ipp2p=stringa_ricevuta_server[20:59]
+                    pp2p=stringa_ricevuta_server[59:64]
+                    ttl=stringa_ricevuta_server[64:66]
+                    ricerca=elimina_spazi_iniziali_finali(stringa_ricevuta_srever[66:86])
+                    ttl=int(ttl)-1
+                    conn_db=Connessione.Connessione()
+                    try:
+                        pkt=PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
+                    except:
+                        if(ttl>=0):
+                            conn_db=Connessione.Connessione()
+                            files= []
+                            files = FileService.FileService.getFiles(conn_db.crea_cursore(),ricerca)
+                            i=0
+                            while i < len(files):
+                                print ("\t\t\t\t\t\t\t\t\tinoltro file al richiedente****" +" "+files[i].filemd5 + " "+files[i].filename)
+
+                                stringa_risposta="AQUE"+pktid+host+adattaStringa(5, str(porta))+files[i].filemd5+files[i].filename
+                                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                                sock.connect((ipp2p, int(pp2p)) )
+                                sock.send(stringa_risposta) #attenzione enconde
+                                sock.close()
+
+                            conn_db.esegui_commit()
+                            conn_db.chiudi_connessione()
+
+
+                            vicini= []
+                            vicini = NearService.NearService.getNears(conn_db.crea_cursore())
+                            i=0
+                            while i < len(vicini):
+                                if(vicini[i].ipp2p!=ipp2p and vicini[i].pp2p!=pp2p):
+                                    print ("\t\t\t\t\t\t\t\t\tinoltro QUER a vicini****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
+                                    sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                                    sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
+                                    stringa_ricevuta_server="QUER"+pktid+ipp2p+adattaStringa(5, str(pp2p))+adattaStringa(2,str(ttl))
+                                    sock.send(stringa_ricevuta_server.encode())
+                                    #chiudere socket????? sock.cloese()
+                                i = i+1
+                    finally:
+                        conn_db.esegui_commit()
+                        conn_db.chiudi_connessione()
+                        
+        
+        #fine operazione QUER
+         
         
 
             except Exception as e: 

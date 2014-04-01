@@ -7,7 +7,7 @@ class Connessione:
            
             self.db = MySQLdb.connect(host="localhost", # your host, usually localhost
                                   user="root", # your username
-                                  passwd="lucaluca", # your password
+                                  passwd="lorenzo91", # your password
                                   db="gnutella") # name of the data base
         
         except Exception as e: 
