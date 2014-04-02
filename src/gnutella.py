@@ -10,6 +10,8 @@ import FileService
 import Connessione
 import Near
 import NearService
+import SearchResult
+import SearchResultService
 
 def visualizza_menu_principale():
     
@@ -53,7 +55,7 @@ def elimina_spazi_iniziali_finali(stringa):
 
     return ritorno2[::-1]
 
-host = "fd00:0000:0000:0000:7908:2399:b931:4f57"#"0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
+host = "0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
 porta = 3331
 size = 1024
 ttl = 2
@@ -77,7 +79,14 @@ if(pid==0): #figlio per gestire operazioni menu
                 print("\n\tErrore lunghezza query maggiore di 20!")
             
             query_ricerca=aggiungi_spazi_finali(query_ricerca)
-            print(query_ricerca)    
+            #print(query_ricerca)    
+            
+            
+            #pulisco la tabella searchresult, questa operazione va fatta prima di ogni ricerca
+            conn_db=Connessione.Connessione()
+            SearchResultService.SearchResultService.delete(conn_db.crea_cursore())
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
             
             
             conn_db=Connessione.Connessione()
@@ -229,6 +238,8 @@ else: #gestisco funzionalita server
                     ricerca_con_spazi=stringa_ricevuta_server[66:86]
                     ricerca=elimina_spazi_iniziali_finali(stringa_ricevuta_server[66:86])
                     ttl=int(ttl)-1
+                    
+                   
                     conn_db=Connessione.Connessione()
                     try:
                         pkt=PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
@@ -275,7 +286,17 @@ else: #gestisco funzionalita server
         #operazione AQUE
                 if operazione.upper()=="AQUE":
                     print(stringa_ricevuta_server)
-        
+                    pktid=stringa_ricevuta_server[4:20]
+                    ipp2p=stringa_ricevuta_server[20:59]
+                    pp2p=stringa_ricevuta_server[59:64]
+                    filemd5=stringa_ricevuta_server[64:80]
+                    filename=stringa_ricevuta_server[80:180]
+                    
+                    conn_db=Connessione.Connessione()
+                    sr= searchResultService.searchResultService.insertNewsearchResult(conn_db.crea_cursore())
+                    
+                    conn_db.esegui_commit()
+                    conn_db.chiudi_connessione()
         
         
         
