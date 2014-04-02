@@ -5,23 +5,15 @@ class SearchResultService:
     EXPIREDTIME = 300
     
     @staticmethod
-    def insertNewSearchResult(database):
-        sr = Packet.Packet(None, None)
+    def insertNewSearchResult(database,ipp2p,pp2p,filemd5,filename):
+        sr = SearchResult.SearchResult(ipp2p,pp2p,filemd5,filename)
         sr.insert(database)
-        return packet
+        return sr
+    
+   
+    
     
     @staticmethod
-    def getPacket(database, packetid):
-        database.execute("""SELECT packetid, created_at
-                            FROM packet
-                            WHERE packetid = %s""",
-                            packetid)
-        packetid, created_at = database.fetchone()
-        packet = Packet.Packet(packetid, created_at)
-        return packet
+    def delete( database):
+        database.execute("""DELETE FROM searchresult""")
     
-    @staticmethod
-    def deleteExpiredPacket(database):
-        database.execute("""DELETE FROM packet
-                            WHERE UNIX_TIMESTAMP() - UNIX_TIMESTAMP(created_at) > %s""",
-                            (EXPIREDTIME))
