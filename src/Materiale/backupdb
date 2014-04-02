@@ -9,7 +9,7 @@ USE `gnutella` ;
 -- Table `gnutella`.`file`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `gnutella`.`file` (
-  `fileid` INT NOT NULL DEFAULT 0 ,
+  `fileid` INT NOT NULL DEFAULT 0 AUTO_INCREMENT ,
   `filemd5` CHAR(16) NOT NULL ,
   `filename` CHAR(100) NOT NULL ,
   PRIMARY KEY (`fileid`) ,
