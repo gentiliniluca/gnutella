@@ -16,9 +16,9 @@ import SearchResultService
 def visualizza_menu_principale():
     
     while True:
-        print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  3 - Carica File     *\n*  0 - Fine            *\n************************")
+        print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  3 - Carica File     *\n*  4 - Download File   *\n*  0 - Fine            *\n************************")
         out=raw_input("\n\tOperazione scelta: ")
-        if(int(out)>=0 and int(out)<=3):
+        if(int(out)>=0 and int(out)<=4):
             break
         print("Valore inserito errato! (valore compreso tra 0 e 3)")
     return out
@@ -55,8 +55,8 @@ def elimina_spazi_iniziali_finali(stringa):
 
     return ritorno2[::-1]
 
-host = "0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
-porta = 3331
+host = "fd00:0000:0000:0000:681d:5e31:677e:b0c2"#"0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
+porta = 3332
 size = 1024
 ttl = 2
 
@@ -293,7 +293,7 @@ else: #gestisco funzionalita server
                     filename=stringa_ricevuta_server[80:180]
                     
                     conn_db=Connessione.Connessione()
-                    sr= searchResultService.searchResultService.insertNewsearchResult(conn_db.crea_cursore())
+                    sr= SearchResultService.SearchResultService.insertNewSearchResult(conn_db.crea_cursore(),ipp2p,pp2p,filemd5,filename)
                     
                     conn_db.esegui_commit()
                     conn_db.chiudi_connessione()
