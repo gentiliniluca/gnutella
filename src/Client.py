@@ -7,11 +7,13 @@ class Client:
     @staticmethod
     def visualizza_menu_principale():
         
-        print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  3 - Carica File     *\n*  4 - Download File   *\n*  0 - Fine            *\n************************")
-        out=raw_input("\n\tOperazione scelta: ")
-        if(int(out) >= 0 and int(out) <= 4):
-            break
-        print("Valore inserito errato! (valore compreso tra 0 e 4)")
+        while True:
+            print("\n************************\n*  1 - Ricerca File    *\n*  2 - Ricerca vicini  *\n*  3 - Carica File     *\n*  4 - Download File   *\n*  0 - Fine            *\n************************")
+            out=raw_input("\n\tOperazione scelta: ")
+            if(int(out) >= 0 and int(out) <= 4):
+                break
+            print("Valore inserito errato! (valore compreso tra 0 e 4)")
+        
         return out
     
     @staticmethod
@@ -51,7 +53,7 @@ class Client:
             print(i + 1+".\t"+searchResults[i].filename+"\t"+searchResults[i].ipp2p+"\t"+searchResults[i].pp2p)
             i = i + 1
         
-        #il valore di choice è incrementato di uno
+        #il valore di choice e' incrementato di uno
         choice = raw_input("Scegliere il numero del peer da cui scaricare") 
         sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         sock.connect((searchResults[choice - 1].ipp2p, int(searchResults[choice - 1].pp2p)))
