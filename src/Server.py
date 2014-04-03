@@ -1,0 +1,142 @@
+import Util 
+import FileService
+
+class Server:
+    
+    global SIZE
+    SIZE = 1024
+    
+    stringa_ricevuta_server = ""
+    
+    @staticmethod
+    def initServerSocket():
+        
+        s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind((host, porta))
+        s.listen(5)
+        return s
+    
+    @staticmethod
+    def expiredPacketHandler():
+        
+        conn_db = Connessione.Connessione()
+        PacketService.PacketService.deleteExpiredPacket(conn_db.crea_cursore())
+        conn_db.esegui_commit()
+        conn_db.chiudi_connessione()
+        
+    @staticmethod
+    def readSocket(client):
+        
+        stringa_ricevuta_server = client.recv(SIZE)
+        print("\t\t\t\t\t\t\t\t\tlato server ho ricevuto: " + stringa_ricevuta_server)
+        if stringa_ricevuta_server == "":
+            print("\t\t\t\t\t\t\t\t\t\t\t\tsocket vuota")
+        else:      
+            print("\n\t\t\t\t\t\t\t\t\tMESSAGGIO RICEVUTO: ")
+        return stringa_ricevuta_server
+        
+    @staticmethod
+    def nearHandler(stringa_ricevuta_server):
+        
+        pktid = stringa_ricevuta_server[4:20]
+        ipp2p = stringa_ricevuta_server[20:59]
+        pp2p = stringa_ricevuta_server[59:64]
+        ttl = stringa_ricevuta_server[64:66] 
+        
+        print ("\t\t\t\t\t\t\t\t\tOperazione Near pktid: " + pktid + " ip: " + ipp2p + " porta: " + pp2p + " ttl: " + ttl)
+
+        ttl = int(ttl) - 1
+        
+        conn_db = Connessione.Connessione()
+        try:            
+            pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
+        
+        except:            
+            print("\t\t\t\t\t\t\t\t\tpkt non presente, se ttl > 0 invio")
+            if(ttl >= 0):
+                # invio a vicini tranne mittente
+                vicini = []
+                vicini = NearService.NearService.getNears(conn_db.crea_cursore())
+                
+                i = 0
+                while i < len(vicini):
+                    if(vicini[i].ipp2p != ipp2p and vicini[i].pp2p != pp2p):
+                        print("\t\t\t\t\t\t\t\t\tinoltro near a vicini****" + " " + vicini[i].pp2p + " " + vicini[i].ipp2p)
+                        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                        sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
+                        stringa_ricevuta_server = "NEAR" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2, str(ttl))
+                        sock.send(stringa_ricevuta_server.encode())
+                    i = i + 1
+                    
+                stringa_risposta = "ANEA" + pktid + host + Util.Util.adattaStringa(5, str(porta))
+                print("\t\t\t\t\t\t\t\t\trispondo con " + stringa_risposta)
+                
+                sockr = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                sockr.connect((ipp2p, int(pp2p)))
+                sockr.send(stringa_risposta.encode())
+                
+        finally:            
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
+            
+    @staticmethod
+    def addNewNear(stringa_ricevuta_server):
+                
+        pktid = stringa_ricevuta_server[4:20]
+        ipp2p = stringa_ricevuta_server[20:59]
+        pp2p = stringa_ricevuta_server[59:64]
+        
+        print("\t\t\t\t\t\t\t\t\tOperazione Anea pktid: " + pktid + " ip: " + ipp2p + " porta: " + pp2p)
+        #inserisco su db il vicino con ipp2p e porta
+        
+        try:            
+            conn_db = Connessione.Connessione()
+            vicino = NearService.NearService.insertNewNear(conn_db.crea_cursore(), ipp2p, pp2p)
+        
+        except:            
+            print("\t\t\t\t\t\t\t\t\tInserimento di vicino non effettuato")
+            
+        finally:            
+            conn_db.esegui_commit() 
+            conn_db.chiudi_connessione()
+            
+    @staticmethod
+    def uploadHandler(client, stringa_ricevuta_server):
+        
+        chunkLength = 1024
+        filemd5 = stringa_ricevuta_server[4:20]
+        
+        try:
+            file = FileService.FileService.getFile(filemd5)
+            if os.stat(file.filename).st_size % chunkLength == 0:
+                nChunk = os.stat(file.filename).st_size // chunkLength
+            else:
+                nChunk = (os.stat(file.filename).st_size // chunkLength) + 1
+                
+            nChunk = str(nChunk).zfill(6)
+            sendingString = "ARET".encode()
+            sendingString = sendingString + nChunk.encode()
+            
+            openedFile = open(file.filename, "rb")
+            while True:
+                chunk = openedFile.read(chunkLength)
+                if len(chunk) == chunkLength:
+                    sendingString = sendingString + str(chunkLength).zfill(5).encode()
+                    sendingString = sendingString + chunk
+                else:
+                    sendingString = sendingString + str(len(chunk)).zfill(5).encode()
+                    sendingString = sendingString + chunk
+                    break
+            
+            while True:
+                m = sendingString[:1024]                    
+                client.send(m)                    
+                if len(m) < 1024:
+                    break
+                sendingString = sendingString[1024:]
+        except:
+            print("File not found!")
+            
+                
+        
