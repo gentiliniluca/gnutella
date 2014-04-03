@@ -51,7 +51,12 @@ class Client:
         conn_db.chiudi_connessione()
         
     @staticmethod
-    def downloadHandler(searchResults):
+    def downloadHandler():
+        
+        conn_db = Connessione.Connessione()
+        searchResults = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+        conn_db.esegui_commit()
+        conn_db.chiudi_connessione()
         
         i = 0
         while i < len(searchResults):
@@ -106,37 +111,37 @@ class Client:
                 break
             print("\n\tErrore lunghezza query maggiore di 20!")
                 
-            query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca)
-            #print(query_ricerca)                
-                
-            #pulisco la tabella searchresult, questa operazione va fatta prima di ogni ricerca
-            conn_db = Connessione.Connessione()
-            SearchResultService.SearchResultService.delete(conn_db.crea_cursore())
-            conn_db.esegui_commit()
-            conn_db.chiudi_connessione()            
+        query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca)
+        #print(query_ricerca)                
             
-            conn_db = Connessione.Connessione()
-            pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
-            conn_db.esegui_commit()
-            conn_db.chiudi_connessione()
-            ttl = TTL 
-            stringa_da_trasmettere = "QUER" + pkt.packetid + host + "" + adattaStringa(5,str(porta)) + adattaStringa(2,str(ttl)) + query_ricerca
+        #pulisco la tabella searchresult, questa operazione va fatta prima di ogni ricerca
+        conn_db = Connessione.Connessione()
+        SearchResultService.SearchResultService.delete(conn_db.crea_cursore())
+        conn_db.esegui_commit()
+        conn_db.chiudi_connessione()            
+        
+        conn_db = Connessione.Connessione()
+        pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+        conn_db.esegui_commit()
+        conn_db.chiudi_connessione()
+        ttl = Util.TTL 
+        stringa_da_trasmettere = "QUER" + pkt.packetid + Util.HOST + "" + adattaStringa(5,str(Util.PORT)) + adattaStringa(2,str(Util.TTL)) + query_ricerca
+        
+        #print("stringa inviata dal client: "+stringa_da_trasmettere)
+        
+        conn_db = Connessione.Connessione()
+        vicini = []
+        vicini = NearService.NearService.getNears(conn_db.crea_cursore())
+        i = 0
+        while i < len(vicini):
+            #print ("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
+            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+            sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
+            sock.send(stringa_da_trasmettere.encode())
+            i = i + 1
             
-            #print("stringa inviata dal client: "+stringa_da_trasmettere)
-            
-            conn_db = Connessione.Connessione()
-            vicini = []
-            vicini = NearService.NearService.getNears(conn_db.crea_cursore())
-            i = 0
-            while i < len(vicini):
-                #print ("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
-                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-                sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
-                sock.send(stringa_da_trasmettere.encode())
-                i = i + 1
-                
-            conn_db.esegui_commit()
-            conn_db.chiudi_connessione()
+        conn_db.esegui_commit()
+        conn_db.chiudi_connessione()
             
     @staticmethod
     def addFile():

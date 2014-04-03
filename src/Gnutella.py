@@ -25,7 +25,11 @@ class Gnutella:
                 
             #aggiunta file
             if(int(operazione_utente) == 3):            
-                Client.Client.addFile()             
+                Client.Client.addFile()
+            
+            #download file
+            if(int(operazione_utente) == 4):
+                Client.Client.downloadHandler()
                        
                      
         print("Fine operazioni utente")
@@ -58,6 +62,14 @@ class Gnutella:
                     #operazione ANEA
                     if operazione.upper() == "ANEA":
                         Server.Server.addNewNear(receivedString)
+                        
+                    #operazione QUER
+                    if operazione.upper()=="QUER":
+                        Server.Server.searchHandler(receivedString)
+                    
+                    #operazione AQUE
+                    if operazione.upper()=="AQUE":
+                        Server.Server.searchResultHandler(receivedString)
                         
                     #operazione RETR
                     if operazione.upper() == "RETR":

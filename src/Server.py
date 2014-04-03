@@ -66,14 +66,14 @@ class Server:
                 i = 0
                 while i < len(vicini):
                     if(vicini[i].ipp2p != ipp2p and vicini[i].pp2p != pp2p):
-                        print("\t\t\t\t\t\t\t\t\tinoltro near a vicini****" + " " + vicini[i].pp2p + " " + vicini[i].ipp2p)
+                        print("\t\t\t\t\t\t\t\t\tinoltro near a vicini****" + " " + vicini[i].pp2p + " " + vicini[i].ipp2p + " con ttl " + str(ttl))
                         sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                         sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
                         stringa_ricevuta_server = "NEAR" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2, str(ttl))
                         sock.send(stringa_ricevuta_server.encode())
                     i = i + 1
                     
-                stringa_risposta = "ANEA" + pktid + host + Util.Util.adattaStringa(5, str(porta))
+                stringa_risposta = "ANEA" + pktid + Util.HOST + Util.Util.adattaStringa(5, str(Util.PORT))
                 print("\t\t\t\t\t\t\t\t\trispondo con " + stringa_risposta)
                 
                 sockr = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
@@ -104,7 +104,74 @@ class Server:
         finally:            
             conn_db.esegui_commit() 
             conn_db.chiudi_connessione()
+    
+    @staticmethod
+    def searchHandler(stringa_ricevuta_server):
+        pktid = stringa_ricevuta_server[4:20]
+        ipp2p = stringa_ricevuta_server[20:59]
+        pp2p = stringa_ricevuta_server[59:64]
+        ttl = stringa_ricevuta_server[64:66]
+        ricerca_con_spazi = stringa_ricevuta_server[66:86]
+        ricerca = Util.Util.elimina_spazi_iniziali_finali(stringa_ricevuta_server[66:86])
+        ttl = int(ttl) - 1
+        
+       
+        conn_db = Connessione.Connessione()
+        try:
+            pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
             
+        except:
+            if(ttl >= 0):
+                conn_db = Connessione.Connessione()
+                files = []
+                files = FileService.FileService.getFiles(conn_db.crea_cursore(), ricerca)
+                i = 0
+                while i < len(files):
+                    print ("\t\t\t\t\t\t\t\t\tinoltro file al richiedente****" + " " + files[i].filemd5 + " " + files[i].filename)
+
+                    stringa_risposta = "AQUE" + pktid + Util.HOST + adattaStringa(5, str(Util.PORT)) + files[i].filemd5 + files[i].filename
+                    sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                    sock.connect((ipp2p, int(pp2p)))
+                    sock.send(stringa_risposta) #attenzione enconde
+                    sock.close()
+                    i = i + 1
+
+                conn_db.esegui_commit()
+                conn_db.chiudi_connessione()
+
+                conn_db = Connessione.Connessione()
+                vicini = []
+                vicini = NearService.NearService.getNears(conn_db.crea_cursore())
+                i = 0
+                while i < len(vicini):
+                    if(vicini[i].ipp2p != ipp2p and vicini[i].pp2p != pp2p):
+                        print ("\t\t\t\t\t\t\t\t\tinoltro QUER a vicini****" + " " + vicini[i].pp2p + " " + vicini[i].ipp2p)
+                        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                        sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
+                        stringa_ricevuta_server = "QUER" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2,str(ttl)) + ricerca_con_spazi
+                        sock.send(stringa_ricevuta_server.encode())
+                        #chiudere socket????? sock.cloese()
+                    i = i + 1
+        finally:
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
+    
+    @staticmethod
+    def searchResultHandler(stringa_ricevuta_server):
+        print(stringa_ricevuta_server)
+        
+        pktid = stringa_ricevuta_server[4:20]
+        ipp2p = stringa_ricevuta_server[20:59]
+        pp2p = stringa_ricevuta_server[59:64]
+        filemd5 = stringa_ricevuta_server[64:80]
+        filename = stringa_ricevuta_server[80:180]
+        
+        conn_db = Connessione.Connessione()
+        sr = SearchResultService.SearchResultService.insertNewSearchResult(conn_db.crea_cursore(), ipp2p, pp2p, filemd5, filename)
+        
+        conn_db.esegui_commit()
+        conn_db.chiudi_connessione()
+    
     @staticmethod
     def uploadHandler(client, stringa_ricevuta_server):
         
