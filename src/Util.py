@@ -15,8 +15,11 @@ class Util:
     global TTL
     TTL = 2
     
-    global LOCAL_PATH
-    LOCAL_PATH = "/home/davide/Immagini/"
+    global MAX_NEARS
+    MAX_NEARS = 2
+    
+    global LOCAL_PATH #percorso file condivisi
+    LOCAL_PATH = "/home/luca/Desktop/gnutella/src/FileCondivisi"
     
     @staticmethod
     def adattaStringa(lunghezzaFinale, stringa):
