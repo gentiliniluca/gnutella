@@ -3,9 +3,9 @@ import hashlib
 class Util:
     
     global HOST
-    HOST = "::1"
+    HOST = "fd00:0000:0000:0000:4cd0:5bf8:91a9:5c7e"
     global PORT
-    PORT = 3331
+    PORT = 3333
     
     global USERNAME
     USERNAME = "p2pAdmin"
@@ -61,7 +61,7 @@ class Util:
                 ritorno = ritorno + stringa[i]
                 lettera = True
        
-        ritorno = ritorno[::-1]   
+        ritorno = ritorno[::-1]
     
         for i in range (0,len(ritorno)):
             if(ritorno[i]!=" " or lettera2==True):
