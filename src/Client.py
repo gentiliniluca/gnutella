@@ -4,12 +4,6 @@ import SearchResultService
 
 class Client:
     
-    global TTL
-    TTL = 2
-    
-    global LOCAL_PATH
-    LOCAL_PATH = "/home/luca/Desktop/gnutella/src/FileCondivisi/"
-    
     @staticmethod
     def visualizza_menu_principale():
         

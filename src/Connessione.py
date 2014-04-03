@@ -5,10 +5,10 @@ class Connessione:
     def __init__(self):
         try:
            
-            self.db = MySQLdb.connect(host="localhost", # your host, usually localhost
-                                  user="root", # your username
-                                  passwd="lucaluca", # your password
-                                  db="gnutella") # name of the data base
+            self.db = MySQLdb.connect(host = "localhost", # your host, usually localhost
+                                      user = Util.USERNAME, # your username
+                                      passwd = Util.PASSWORD, # your password
+                                      db="gnutella") # name of the data base
         
         except Exception as e: 
             print e

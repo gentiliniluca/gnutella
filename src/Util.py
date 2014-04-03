@@ -2,6 +2,17 @@ import hashlib
 
 class Util:
     
+    global USERNAME
+    USERNAME = "p2pAdmin"
+    global PASSWORD
+    PASSWORD = "p2pAdmin"
+    
+    global TTL
+    TTL = 2
+    
+    global LOCAL_PATH
+    LOCAL_PATH = "/home/luca/Desktop/gnutella/src/FileCondivisi/"
+    
     @staticmethod
     def adattaStringa(lunghezzaFinale, stringa):
         
