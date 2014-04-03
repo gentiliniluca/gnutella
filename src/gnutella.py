@@ -154,9 +154,9 @@ if(pid==0): #figlio per gestire operazioni menu
             conn_db=Connessione.Connessione()
             nomefile=raw_input("Inserire il nome del file: /home/luca/Desktop/gnutella/src/FileCondivisi/")
             nomefile="/home/luca/Desktop/gnutella/src/FileCondivisi/"+nomefile
-            nomefile=aggiungi_spazi_finali(nomefile,100)
             filemd5=get_md5(nomefile)
             print("md5: "+filemd5+" nome:"+nomefile)
+            nomefile=aggiungi_spazi_finali(nomefile,100)
             
             file=FileService.FileService.insertNewFile(conn_db.crea_cursore(),filemd5,nomefile)
             
