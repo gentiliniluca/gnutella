@@ -96,7 +96,8 @@ class Server:
         
         try:            
             conn_db = Connessione.Connessione()
-            vicino = NearService.NearService.insertNewNear(conn_db.crea_cursore(), ipp2p, pp2p)
+            if(MAX_NEARS>int(NearService-NearService.getNearsCount(conn_db.crea_cursore()))):
+                vicino = NearService.NearService.insertNewNear(conn_db.crea_cursore(), ipp2p, pp2p)
         
         except:            
             print("\t\t\t\t\t\t\t\t\tInserimento di vicino non effettuato")
