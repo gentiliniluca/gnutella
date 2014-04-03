@@ -12,6 +12,7 @@ import Near
 import NearService
 import SearchResult
 import SearchResultService
+import hashlib
 
 def visualizza_menu_principale():
     
@@ -55,8 +56,19 @@ def elimina_spazi_iniziali_finali(stringa):
 
     return ritorno2[::-1]
 
-host = "fd00:0000:0000:0000:681d:5e31:677e:b0c2"#"0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
-porta = 3332
+def get_md5(filename):
+        md5 = hashlib.md5()
+        with open(filename,"rb") as f:
+            while True:
+                data = f.read(1024)
+                md5.update(data)
+                if len(data) < 1024:
+                    break
+        md5_res = md5.digest()
+        return md5_res
+
+host = "fd00:0000:0000:0000:c8ea:2cf7:3689:f4fe"#"0000:0000:0000:0000:0000:0000:0000:0001" #"fd00:0000:0000:0000:f555:e5e7:29d7:79cf"#"::1"
+porta = 3331
 size = 1024
 ttl = 2
 
@@ -136,6 +148,21 @@ if(pid==0): #figlio per gestire operazioni menu
                 
             conn_db.esegui_commit()
             conn_db.chiudi_connessione()
+            
+        #operazione aggiunta file
+        if(int(operazione_utente)==3):
+            conn_db=Connessione.Connessione()
+            nomefile=raw_input("Inserire il nome del file: /home/luca/Desktop/gnutella/src/FileCondivisi/")
+            nomefile="/home/luca/Desktop/gnutella/src/FileCondivisi/"+nomefile
+            nomefile=
+            filemd5=get_md5(nomefile)
+            print("md5: "+filemd5+" nome:"+nomefile)
+            
+            file=FileService.FileService.insertNewFile(conn_db.crea_cursore(),filemd5,nomefile)
+            
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
+            
             
                      
     print("fine operazioni utente")
