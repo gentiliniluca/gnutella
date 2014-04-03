@@ -24,9 +24,9 @@ def visualizza_menu_principale():
         print("Valore inserito errato! (valore compreso tra 0 e 3)")
     return out
 
-def aggiungi_spazi_finali(stringa):
+def aggiungi_spazi_finali(stringa, lunghezza):
     i=len(stringa)
-    while i<20:
+    while i<lunghezza:
         stringa=stringa+' '
         i=i+1
     return stringa
@@ -90,7 +90,7 @@ if(pid==0): #figlio per gestire operazioni menu
                     break
                 print("\n\tErrore lunghezza query maggiore di 20!")
             
-            query_ricerca=aggiungi_spazi_finali(query_ricerca)
+            query_ricerca=aggiungi_spazi_finali(query_ricerca, 20)
             #print(query_ricerca)    
             
             
@@ -154,7 +154,7 @@ if(pid==0): #figlio per gestire operazioni menu
             conn_db=Connessione.Connessione()
             nomefile=raw_input("Inserire il nome del file: /home/luca/Desktop/gnutella/src/FileCondivisi/")
             nomefile="/home/luca/Desktop/gnutella/src/FileCondivisi/"+nomefile
-            nomefile=
+            nomefile=aggiungi_spazi_finali(nomefile,100)
             filemd5=get_md5(nomefile)
             print("md5: "+filemd5+" nome:"+nomefile)
             
