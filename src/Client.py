@@ -1,6 +1,10 @@
-import Util 
+import Connessione
+import FileService
+import NearService
+import PacketService
 import SearchResult
 import SearchResultService
+import Util
 
 class Client:
     
@@ -24,9 +28,9 @@ class Client:
         conn_db.esegui_commit()
         conn_db.chiudi_connessione()
         
-        ttl = TTL
+        ttl = Util.TTL
         
-        stringa_da_trasmettere = "NEAR" + pkt.packetid + host + "" + Util.Util.adattaStringa(5, str(porta)) + Util.Util.adattaStringa(2, str(ttl)) 
+        stringa_da_trasmettere = "NEAR" + pkt.packetid + Util.HOST + "" + Util.Util.adattaStringa(5, str(Util.PORT)) + Util.Util.adattaStringa(2, str(ttl)) 
         #print("valore inviato: "+stringa_da_trasmettere)
         
         #lettura vicini da db
@@ -94,7 +98,7 @@ class Client:
             print("Errore nel download del file")  
             
     @staticmethod
-    def serachHandler():
+    def searchHandler():
         while True:
             query_ricerca = raw_input("\n\tInserire la stringa di ricerca (massimo 20 caratteri): ")
             if(len(query_ricerca) <= 20):
@@ -136,11 +140,11 @@ class Client:
     @staticmethod
     def addFile():
         conn_db = Connessione.Connessione()
-        nomefile = raw_input("Inserire il nome del file: " + LOCAL_PATH)
-        nomefile = LOCAL_PATH + nomefile
+        nomefile = raw_input("Inserire il nome del file: " + Util.LOCAL_PATH)
+        nomefile = Util.LOCAL_PATH + nomefile
         filemd5 = Util.Util.get_md5(nomefile)
         print("md5: " + filemd5 + " nome: " + nomefile)
-        nomefile = aggiungi_spazi_finali(nomefile,100)
+        nomefile = Util.Util.aggiungi_spazi_finali(nomefile,100)
         
         file = FileService.FileService.insertNewFile(conn_db.crea_cursore(), filemd5, nomefile)
         

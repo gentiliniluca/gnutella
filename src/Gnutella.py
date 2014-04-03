@@ -2,11 +2,9 @@ import Client
 import Server 
 import Util
 import os
+import signal
 
 class Gnutella:
-    host = "::1"
-    porta = 3331
-    ttl = 2
     
     print("Avvio directory distribuita")
     
@@ -35,7 +33,7 @@ class Gnutella:
         os.kill(os.getppid(), signal.SIGKILL)
         
     else: #gestisco funzionalita server 
-        s = Sever.Server.initServerSocket()
+        s = Server.Server.initServerSocket()
         while 1:
             print("\t\t\t\t\t\t\t\t\tAttesa richiesta peer")
             client, address = s.accept()

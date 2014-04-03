@@ -2,6 +2,11 @@ import hashlib
 
 class Util:
     
+    global HOST
+    HOST = "::1"
+    global PORT
+    PORT = 3331
+    
     global USERNAME
     USERNAME = "p2pAdmin"
     global PASSWORD
@@ -11,7 +16,7 @@ class Util:
     TTL = 2
     
     global LOCAL_PATH
-    LOCAL_PATH = "/home/luca/Desktop/gnutella/src/FileCondivisi/"
+    LOCAL_PATH = "/home/davide/Immagini/"
     
     @staticmethod
     def adattaStringa(lunghezzaFinale, stringa):

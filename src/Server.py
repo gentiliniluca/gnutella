@@ -1,4 +1,5 @@
 import Util 
+import socket
 import FileService
 
 class Server:
@@ -13,7 +14,7 @@ class Server:
         
         s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((host, porta))
+        s.bind((Util.HOST, Util.PORT))
         s.listen(5)
         return s
     
