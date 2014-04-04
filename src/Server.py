@@ -58,7 +58,7 @@ class Server:
             pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
         
         except:
-            pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+            pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
                         
             print("\t\t\t\t\t\t\t\t\tpkt non presente, se ttl > 0 invio")
             if(ttl >= 0):
@@ -125,7 +125,7 @@ class Server:
             pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
             
         except:
-            pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+            pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
             
             if(ttl >= 0):
                 conn_db = Connessione.Connessione()

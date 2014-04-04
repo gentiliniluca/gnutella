@@ -9,7 +9,7 @@ class Packet:
     
     def insert(self, database):
         
-        self.packetid = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(16))
+#        self.packetid = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(16))
         
         database.execute("""INSERT INTO packet
                             (packetid)
