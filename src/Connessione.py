@@ -9,7 +9,7 @@ class Connessione:
             self.db = MySQLdb.connect(host = "localhost", # your host, usually localhost
                                       user = Util.USERNAME, # your username
                                       passwd = Util.PASSWORD, # your password
-                                      db="gnutella") # name of the data base
+                                      db = "gnutella") # name of the data base
         
         except Exception as e: 
             print e

@@ -111,7 +111,7 @@ class Client:
                 break
             print("\n\tErrore lunghezza query maggiore di 20!")
                 
-        query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca)
+        query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca, 20)
         #print(query_ricerca)                
             
         #pulisco la tabella searchresult, questa operazione va fatta prima di ogni ricerca
@@ -125,7 +125,7 @@ class Client:
         conn_db.esegui_commit()
         conn_db.chiudi_connessione()
         ttl = Util.TTL 
-        stringa_da_trasmettere = "QUER" + pkt.packetid + Util.HOST + "" + adattaStringa(5,str(Util.PORT)) + adattaStringa(2,str(Util.TTL)) + query_ricerca
+        stringa_da_trasmettere = "QUER" + pkt.packetid + Util.HOST + "" + Util.Util.adattaStringa(5,str(Util.PORT)) + Util.Util.adattaStringa(2,str(Util.TTL)) + query_ricerca
         
         #print("stringa inviata dal client: "+stringa_da_trasmettere)
         

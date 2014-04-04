@@ -5,8 +5,8 @@ class PacketService:
     EXPIREDTIME = 300
     
     @staticmethod
-    def insertNewPacket(database):
-        packet = Packet.Packet(None, None)
+    def insertNewPacket(database, packetid):
+        packet = Packet.Packet(packetid, None)
         packet.insert(database)
         return packet
     

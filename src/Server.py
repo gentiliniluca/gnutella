@@ -2,6 +2,7 @@ import Connessione
 import FileService
 import NearService
 import PacketService
+import SearchResultService
 import socket
 import Util
 
@@ -56,7 +57,9 @@ class Server:
         try:            
             pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
         
-        except:            
+        except:
+            pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+                        
             print("\t\t\t\t\t\t\t\t\tpkt non presente, se ttl > 0 invio")
             if(ttl >= 0):
                 # invio a vicini tranne mittente
@@ -96,7 +99,7 @@ class Server:
         
         try:            
             conn_db = Connessione.Connessione()
-            if(MAX_NEARS>int(NearService-NearService.getNearsCount(conn_db.crea_cursore()))):
+            if(Util.MAX_NEARS>int(NearService.NearService.getNearsCount(conn_db.crea_cursore()))):
                 vicino = NearService.NearService.insertNewNear(conn_db.crea_cursore(), ipp2p, pp2p)
         
         except:            
@@ -122,6 +125,8 @@ class Server:
             pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
             
         except:
+            pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore())
+            
             if(ttl >= 0):
                 conn_db = Connessione.Connessione()
                 files = []
@@ -130,7 +135,7 @@ class Server:
                 while i < len(files):
                     print ("\t\t\t\t\t\t\t\t\tinoltro file al richiedente****" + " " + files[i].filemd5 + " " + files[i].filename)
 
-                    stringa_risposta = "AQUE" + pktid + Util.HOST + adattaStringa(5, str(Util.PORT)) + files[i].filemd5 + files[i].filename
+                    stringa_risposta = "AQUE" + pktid + Util.HOST + Util.Util.adattaStringa(5, str(Util.PORT)) + files[i].filemd5 + files[i].filename
                     sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
                     sock.connect((ipp2p, int(pp2p)))
                     sock.send(stringa_risposta) #attenzione enconde
@@ -209,6 +214,3 @@ class Server:
                 sendingString = sendingString[1024:]
         except:
             print("File not found!")
-            
-                
-        
