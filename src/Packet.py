@@ -1,6 +1,3 @@
-import string
-import random
-
 class Packet:
     
     def __init__(self, packetid, created_at):

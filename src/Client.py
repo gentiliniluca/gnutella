@@ -2,9 +2,11 @@ import Connessione
 import FileService
 import NearService
 import PacketService
+import random
 import socket
 import SearchResult
 import SearchResultService
+import string
 import Util
 
 class Client:
@@ -151,7 +153,7 @@ class Client:
         conn_db = Connessione.Connessione()
         nomefile = raw_input("Inserire il nome del file: " + Util.LOCAL_PATH)
 #        nomefile = Util.LOCAL_PATH + nomefile
-        filemd5 = Util.Util.get_md5(nomefile)
+        filemd5 = Util.Util.get_md5(Util.LOCAL_PATH + nomefile)
         print("md5: " + filemd5 + " nome: " + nomefile)
         nomefile = Util.Util.aggiungi_spazi_finali(nomefile,100)
         
