@@ -150,7 +150,7 @@ class Client:
     def addFile():
         conn_db = Connessione.Connessione()
         nomefile = raw_input("Inserire il nome del file: " + Util.LOCAL_PATH)
-        nomefile = Util.LOCAL_PATH + nomefile
+#        nomefile = Util.LOCAL_PATH + nomefile
         filemd5 = Util.Util.get_md5(nomefile)
         print("md5: " + filemd5 + " nome: " + nomefile)
         nomefile = Util.Util.aggiungi_spazi_finali(nomefile,100)
