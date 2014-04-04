@@ -57,22 +57,22 @@ class Client:
     def downloadHandler():
         
         conn_db = Connessione.Connessione()
-        packetid = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(16))
-        searchResults = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), packetid)
+        searchResults = SearchResultService.SearchResultService.getSearchResults(conn_db.crea_cursore())
         conn_db.esegui_commit()
         conn_db.chiudi_connessione()
         
         i = 0
         while i < len(searchResults):
-            print(i + 1+".\t"+searchResults[i].filename+"\t"+searchResults[i].ipp2p+"\t"+searchResults[i].pp2p)
+            print(str(i + 1) + ".\t" + searchResults[i].filename + "\t"+searchResults[i].ipp2p + "\t" + searchResults[i].pp2p)
             i = i + 1
         
         #il valore di choice e' incrementato di uno
-        choice = raw_input("Scegliere il numero del peer da cui scaricare") 
+        choice = int(raw_input("Scegliere il numero del peer da cui scaricare")) 
         sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         sock.connect((searchResults[choice - 1].ipp2p, int(searchResults[choice - 1].pp2p)))
-        sendingString = "RETR"+searchResults[choice - 1].filemd5
-        sock.send(sendingString.encode())
+        sendingString = "RETR" + searchResults[choice - 1].filemd5
+        #sock.send(sendingString.encode())
+        sock.send(sendingString)
         
         receivedString = sock.recv(10)
         if receivedString[0:4].decode() == "ARET":

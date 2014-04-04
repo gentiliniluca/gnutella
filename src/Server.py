@@ -121,10 +121,11 @@ class Server:
         
        
         conn_db = Connessione.Connessione()
-        try:
-            pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
+#        try:
+#            pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
             
-        except:
+#        except:
+        try:
             pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
             
             if(ttl >= 0):
@@ -158,6 +159,9 @@ class Server:
                         sock.send(stringa_ricevuta_server.encode())
                         #chiudere socket????? sock.cloese()
                     i = i + 1
+        except:
+            pass
+        
         finally:
             conn_db.esegui_commit()
             conn_db.chiudi_connessione()

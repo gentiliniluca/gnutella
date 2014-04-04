@@ -9,7 +9,6 @@ class SearchResultService:
         
         try:
             sr = SearchResultService.getSearchResult(database, ipp2p, pp2p, filemd5, filename)
-        
         except:
             sr = SearchResult.SearchResult(ipp2p,pp2p,filemd5,filename)
             sr.insert(database)
@@ -18,10 +17,13 @@ class SearchResultService:
     
     @staticmethod
     def getSearchResult(database, ipp2p, pp2p, filemd5, filename):
+        
+        print("Sto cercnado... ",ipp2p, pp2p, filedm5, filename)
+        
         daabase.execute("""SELECT ipp2p, pp2p, filemd5, filename
-                            FROM searchresult
-                            WHERE ipp2p = %s AND pp2p = %s AND filemd5 = %s AND filename = %s""",
-                            (ipp2p, pp2p, filemd5, filename))
+                           FROM searchresult
+                           WHERE ipp2p = %s AND pp2p = %s AND filemd5 = %s AND filename = %s""",
+                           (ipp2p, pp2p, filemd5, filename))
         
         ipp2p, pp2p, filemd5, filename = database.fetchone()
         

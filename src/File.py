@@ -2,7 +2,7 @@ class File:
     def __init__(self, fileid, filemd5, filename):
         self.fileid = fileid
         self.filemd5 = filemd5
-        self.filename = filename.upper()
+        self.filename = filename
     
     def insert(self, database):
         
