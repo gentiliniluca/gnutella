@@ -165,7 +165,7 @@ class Server:
     
     @staticmethod
     def searchResultHandler(stringa_ricevuta_server):
-        print(stringa_ricevuta_server)
+        print(stringa_ricevuta_server) 
         
         pktid = stringa_ricevuta_server[4:20]
         ipp2p = stringa_ricevuta_server[20:59]
