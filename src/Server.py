@@ -50,8 +50,6 @@ class Server:
         ttl = stringa_ricevuta_server[64:66] 
         
         print ("\t\t\t\t\t\t\t\t\tOperazione Near pktid: " + pktid + " ip: " + ipp2p + " porta: " + pp2p + " ttl: " + ttl)
-
-        ttl = int(ttl) - 1
         
         conn_db = Connessione.Connessione()
         try:            
@@ -61,10 +59,11 @@ class Server:
             pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
                         
             print("\t\t\t\t\t\t\t\t\tpkt non presente, se ttl > 0 invio")
-            if(ttl >= 0):
+            if(ttl > 1):
                 # invio a vicini tranne mittente
                 vicini = []
                 vicini = NearService.NearService.getNears(conn_db.crea_cursore())
+                ttl = int(ttl) - 1
                 
                 i = 0
                 while i < len(vicini):
@@ -117,22 +116,22 @@ class Server:
         ttl = stringa_ricevuta_server[64:66]
         ricerca_con_spazi = stringa_ricevuta_server[66:86]
         ricerca = Util.Util.elimina_spazi_iniziali_finali(stringa_ricevuta_server[66:86])
-        ttl = int(ttl) - 1
         
        
         conn_db = Connessione.Connessione()
-#        try:
-#            pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
-            
-#        except:
         try:
+            pkt = PacketService.PacketService.getPacket(conn_db.crea_cursore(), pktid)
+            
+        except:
+
             pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
             
-            if(ttl >= 0):
+            if(ttl > 1):
                 conn_db = Connessione.Connessione()
                 files = []
                 files = FileService.FileService.getFiles(conn_db.crea_cursore(), ricerca)
                 i = 0
+                ttl = int(ttl) - 1
                 while i < len(files):
                     print ("\t\t\t\t\t\t\t\t\tinoltro file al richiedente****" + " " + files[i].filemd5 + " " + files[i].filename)
 
@@ -159,8 +158,6 @@ class Server:
                         sock.send(stringa_ricevuta_server.encode())
                         #chiudere socket????? sock.cloese()
                     i = i + 1
-        except:
-            pass
         
         finally:
             conn_db.esegui_commit()
