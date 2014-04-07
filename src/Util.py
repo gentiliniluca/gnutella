@@ -3,14 +3,14 @@ import hashlib
 class Util:
     
     global HOST
-    HOST = "fd00:0000:0000:0000:4cd0:5bf8:91a9:5c7e"
+    HOST = "fd00:0000:0000:0000:021e:ecff:fe85:6d5c"
     global PORT
-    PORT = 3333
+    PORT = 3331
     
     global USERNAME
-    USERNAME = "p2pAdmin"
+    USERNAME = "root"
     global PASSWORD
-    PASSWORD = "p2pAdmin"
+    PASSWORD = "lucaluca"
     
     global TTL
     TTL = 2
@@ -19,7 +19,7 @@ class Util:
     MAX_NEARS = 2
     
     global LOCAL_PATH #percorso file condivisi
-    LOCAL_PATH = "/home/luca/Desktop/gnutella/src/FileCondivisi"
+    LOCAL_PATH = "/home/luca/Desktop/gnutella/src/FileCondivisi/"
     
     @staticmethod
     def adattaStringa(lunghezzaFinale, stringa):
