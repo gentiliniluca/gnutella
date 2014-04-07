@@ -2,9 +2,15 @@ import Connessione
 import FileService
 import NearService
 import PacketService
+import os
 import SearchResultService
 import socket
 import Util
+
+import sys
+
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE, SIG_DFL)
 
 class Server:
     
@@ -189,17 +195,23 @@ class Server:
         filemd5 = stringa_ricevuta_server[4:20]
         
         try:
-            file = FileService.FileService.getFile(filemd5)
-            if os.stat(file.filename).st_size % chunkLength == 0:
-                nChunk = os.stat(file.filename).st_size // chunkLength
+            conn_db = Connessione.Connessione()
+            
+            file = FileService.FileService.getFileMD5(conn_db.crea_cursore(), filemd5)
+            
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
+
+            if os.stat(Util.LOCAL_PATH + file.filename).st_size % chunkLength == 0:
+                nChunk = os.stat(Util.LOCAL_PATH + file.filename).st_size // chunkLength
             else:
-                nChunk = (os.stat(file.filename).st_size // chunkLength) + 1
+                nChunk = (os.stat(Util.LOCAL_PATH + file.filename).st_size // chunkLength) + 1
                 
             nChunk = str(nChunk).zfill(6)
             sendingString = "ARET".encode()
             sendingString = sendingString + nChunk.encode()
             
-            openedFile = open(file.filename, "rb")
+            openedFile = open(Util.LOCAL_PATH + file.filename, "rb")
             while True:
                 chunk = openedFile.read(chunkLength)
                 if len(chunk) == chunkLength:
@@ -210,11 +222,17 @@ class Server:
                     sendingString = sendingString + chunk
                     break
             
-            while True:
-                m = sendingString[:1024]                    
-                client.send(m)                    
-                if len(m) < 1024:
-                    break
-                sendingString = sendingString[1024:]
+#            while True:
+#                m = sendingString[:1024] 
+#                i = i+1               
+#                client.send(m)                    
+#                if len(m) < 1024:
+#                    break
+#                sendingString = sendingString[1024:]
+            client.sendall(sendingString)
+            
+            openedFile.close()
+            
         except:
+            print sys.exc_info()
             print("File not found!")

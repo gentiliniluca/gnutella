@@ -28,6 +28,20 @@ class FileService:
         return file
     
     @staticmethod
+    def getFileMD5(database, filemd5):
+        
+        database.execute("""SELECT fileid, filemd5, filename
+                            FROM file
+                            WHERE filemd5 = %s""",
+                            (filemd5))
+        
+        fileid, filemd5, filename = database.fetchone()
+        
+        file = File.File(fileid, filemd5, filename)
+        
+        return file
+    
+    @staticmethod
     def getFiles(database, searchString):
         
         searchString = "%" + searchString.upper() + "%"
