@@ -9,6 +9,9 @@ import SearchResultService
 import string
 import Util
 
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL)
+
 class Client:
     
     @staticmethod
@@ -68,23 +71,23 @@ class Client:
         
         #il valore di choice e' incrementato di uno
         choice = int(raw_input("Scegliere il numero del peer da cui scaricare")) 
-        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)        
         sock.connect((searchResults[choice - 1].ipp2p, int(searchResults[choice - 1].pp2p)))
         sendingString = "RETR" + searchResults[choice - 1].filemd5
         #sock.send(sendingString.encode())
         sock.send(sendingString)
         
-        receivedString = sock.recv(10)
+        receivedString = sock.recv(10)        
         if receivedString[0:4].decode() == "ARET":
-            nChunk = int(receivedString[4:9].decode())
+            nChunk = int(receivedString[4:10].decode())            
             chunk = bytes()
             chunkCounter = 0
             
-            file = open(searchResults[choice - 1].filename, "wb")
+            file = open(Util.LOCAL_PATH + searchResults[choice - 1].filename, "wb")
             
             while chunkCounter < nChunk:
                 receivedString = sock.recv(1024)
-                chunk = chunk + receivedString
+                chunk = chunk + receivedString                
                 
                 while True:
                     if len(chunk[:5]) >=  5:
@@ -99,11 +102,13 @@ class Client:
                         chunk = chunk[5 + chunkLength:]
                     else:
                         break
-        
+                    
+            file.close()
+            
         sock.close() 
         
         #controllo correttezza del download
-        myMd5 = Util.Util.md5(searchResults[choice - 1].filename)        
+        myMd5 = Util.Util.md5(Util.LOCAL_PATH + searchResults[choice - 1].filename)        
         if myMd5 != searchResults[choice - 1].filemd5:
             print("Errore nel download del file")  
             
