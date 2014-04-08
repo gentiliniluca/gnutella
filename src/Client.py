@@ -110,7 +110,7 @@ class Client:
         #controllo correttezza del download
         myMd5 = Util.Util.md5(Util.LOCAL_PATH + searchResults[choice - 1].filename)        
         if myMd5 != searchResults[choice - 1].filemd5:
-            print("Errore nel download del file")  
+            print("Errore nel download del file, gli md5 sono diversi!")  
             
     @staticmethod
     def searchHandler():
