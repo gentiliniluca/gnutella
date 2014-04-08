@@ -208,6 +208,9 @@ class Server:
         filemd5 = stringa_ricevuta_server[64:80]
         filename = stringa_ricevuta_server[80:180]
         
+        filename = Util.Util.elimina_spazi_iniziali_finali(filename)
+        filename = Util.Util.elimina_asterischi_iniziali_finali(filename)
+        
         conn_db = Connessione.Connessione()
         sr = SearchResultService.SearchResultService.insertNewSearchResult(conn_db.crea_cursore(), ipp2p, pp2p, filemd5, filename)
         
