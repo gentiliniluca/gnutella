@@ -65,7 +65,7 @@ class Server:
             pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
                         
             print("\t\t\t\t\t\t\t\t\t Ricerca vinici - pkt non presente, se ttl > 0 invio  * valore ttl= "+str(ttl))
-            if(ttl > 1):
+            if(int(ttl) > 1):
                 # invio a vicini tranne mittente
                 vicini = []
                 vicini = NearService.NearService.getNears(conn_db.crea_cursore())
@@ -132,7 +132,7 @@ class Server:
 
             pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
             print("\t\t\t\t\t\t\t\t\t Ricerca file - pkt non presente, se ttl > 0 invio  * valore ttl= "+str(ttl))
-            if(ttl > 1):
+            if(int(ttl) > 1):
                 conn_db = Connessione.Connessione()
                 files = []
                 files = FileService.FileService.getFiles(conn_db.crea_cursore(), ricerca)
