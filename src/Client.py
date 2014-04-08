@@ -66,11 +66,11 @@ class Client:
         
         i = 0
         while i < len(searchResults):
-            print(str(i + 1) + ".\t" + searchResults[i].filename + "\t"+searchResults[i].ipp2p + "\t" + searchResults[i].pp2p)
+            print("\t"+str(i + 1) + ".\t" + searchResults[i].filename + "\t"+searchResults[i].ipp2p + "\t" + searchResults[i].pp2p)
             i = i + 1
         
         #il valore di choice e' incrementato di uno
-        choice = int(raw_input("Scegliere il numero del peer da cui scaricare")) 
+        choice = int(raw_input("\tScegliere il numero del peer da cui scaricare: ")) 
         sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)        
         sock.connect((searchResults[choice - 1].ipp2p, int(searchResults[choice - 1].pp2p)))
         sendingString = "RETR" + searchResults[choice - 1].filemd5
