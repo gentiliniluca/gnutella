@@ -48,9 +48,12 @@ class Client:
         i = 0
         while i < len(vicini):
             #print("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
-            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-            sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
-            sock.send(stringa_da_trasmettere.encode())
+            try:
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
+                sock.send(stringa_da_trasmettere.encode())
+            except:
+                print("Il vicino "+vicini[i].pp2p + " non e' online")
             i = i + 1
             
         conn_db.esegui_commit()
@@ -120,7 +123,9 @@ class Client:
                 break
             print("\n\tErrore lunghezza query maggiore di 20!")
                 
-        query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca, 20)
+        #query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca, 20)
+        query_ricerca = Util.Util.riempi_stringa(query_ricerca, 20)
+        
         #print(query_ricerca)                
             
         #pulisco la tabella searchresult, questa operazione va fatta prima di ogni ricerca
@@ -145,9 +150,12 @@ class Client:
         i = 0
         while i < len(vicini):
             #print ("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
-            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-            sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
-            sock.send(stringa_da_trasmettere.encode())
+            try:
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
+                sock.send(stringa_da_trasmettere.encode())
+            except:
+                print("Il vicino "+vicini[i].pp2p + " non e' online")
             i = i + 1
             
         conn_db.esegui_commit()
@@ -160,8 +168,8 @@ class Client:
 #        nomefile = Util.LOCAL_PATH + nomefile
         filemd5 = Util.Util.get_md5(Util.LOCAL_PATH + nomefile)
         print("md5: " + filemd5 + " nome: " + nomefile)
-        nomefile = Util.Util.aggiungi_spazi_finali(nomefile,100)
-        
+        #nomefile = Util.Util.aggiungi_spazi_finali(nomefile,100)
+        nomefile = Util.Util.riempi_stringa(nomefile, 100)
         file = FileService.FileService.insertNewFile(conn_db.crea_cursore(), filemd5, nomefile)
         
         conn_db.esegui_commit()

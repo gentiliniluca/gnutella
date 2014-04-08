@@ -75,10 +75,13 @@ class Server:
                 while i < len(vicini):
                     if(vicini[i].ipp2p != ipp2p and vicini[i].pp2p != pp2p):
                         print("\t\t\t\t\t\t\t\t\tinoltro near a vicini****" + " " + vicini[i].pp2p + " " + vicini[i].ipp2p + " con ttl " + str(ttl))
-                        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-                        sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
-                        stringa_ricevuta_server = "NEAR" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2, str(ttl))
-                        sock.send(stringa_ricevuta_server.encode())
+                        try:
+                            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                            sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
+                            stringa_ricevuta_server = "NEAR" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2, str(ttl))
+                            sock.send(stringa_ricevuta_server.encode())
+                        except:
+                            print("Il vicino "+vicini[i].pp2p + " non e' online")
                     i = i + 1
                     
                 stringa_risposta = "ANEA" + pktid + Util.HOST + Util.Util.adattaStringa(5, str(Util.PORT))
@@ -129,6 +132,7 @@ class Server:
         ttl = stringa_ricevuta_server[64:66]
         ricerca_con_spazi = stringa_ricevuta_server[66:86]
         ricerca = Util.Util.elimina_spazi_iniziali_finali(stringa_ricevuta_server[66:86])
+        ricerca = Util.Util.elimina_asterischi_iniziali_finali(stringa_ricevuta_server[66:86])
         
        
         conn_db = Connessione.Connessione()
@@ -165,11 +169,14 @@ class Server:
                 while i < len(vicini):
                     if(vicini[i].ipp2p != ipp2p and vicini[i].pp2p != pp2p):
                         print ("\t\t\t\t\t\t\t\t\tinoltro QUER a vicini****" + " " + vicini[i].pp2p + " " + vicini[i].ipp2p)
-                        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-                        sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
-                        stringa_ricevuta_server = "QUER" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2,str(ttl)) + ricerca_con_spazi
-                        sock.send(stringa_ricevuta_server.encode())
-                        #chiudere socket????? sock.cloese()
+                        try:
+                            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                            sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
+                            stringa_ricevuta_server = "QUER" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2,str(ttl)) + ricerca_con_spazi
+                            sock.send(stringa_ricevuta_server.encode())
+                            #chiudere socket????? sock.cloese()
+                        except:
+                            print("Il vicino "+vicini[i].pp2p + " non e' online")
                     i = i + 1
             else:
                 if(int(ttl)==1):

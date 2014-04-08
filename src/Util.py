@@ -3,14 +3,14 @@ import hashlib
 class Util:
     
     global HOST
-    HOST = "fd00:0000:0000:0000:021e:ecff:fe85:6d5c"
+    HOST = "fd00:0000:0000:0000:055f:8b05:85a9:a02d"
     global PORT
-    PORT = 3331
+    PORT = 3332
     
     global USERNAME
     USERNAME = "root"
     global PASSWORD
-    PASSWORD = "lucaluca"
+    PASSWORD = "lorenzo91"
     
     global TTL
     TTL = 2
@@ -19,7 +19,7 @@ class Util:
     MAX_NEARS = 2
     
     global LOCAL_PATH #percorso file condivisi
-    LOCAL_PATH = "/home/luca/Desktop/gnutella/src/FileCondivisi/"
+    LOCAL_PATH = "/home/lorenzo/Desktop/gnutella/src/FileCondivisi/"
     
     @staticmethod
     def adattaStringa(lunghezzaFinale, stringa):
@@ -44,11 +44,25 @@ class Util:
         return md5.digest() 
     
     @staticmethod
+    def riempi_stringa(stringa,lunghezza):
+        return Util.aggiungi_asterischi_finali(stringa,lunghezza)
+        #return Util.aggiungi_spazi_finali(stringa,lunghezza)
+    
+    @staticmethod
     def aggiungi_spazi_finali(stringa, lunghezza):
         
         i = len(stringa)
         while i < lunghezza:
             stringa = stringa + ' '
+            i = i + 1
+        return stringa
+    
+    @staticmethod
+    def aggiungi_asterischi_finali(stringa, lunghezza):
+        
+        i = len(stringa)
+        while i < lunghezza:
+            stringa = stringa + '*'
             i = i + 1
         return stringa
     
@@ -74,6 +88,27 @@ class Util:
         return ritorno2[::-1]
     
     @staticmethod
+    def elimina_asterischi_iniziali_finali(stringa):
+        
+        ritorno = ""
+        ritorno2 = ""
+        lettera = False
+        lettera2 = False
+        for i in range (0, len(stringa)):
+            if(stringa[i] != "*" or lettera == True):
+                ritorno = ritorno + stringa[i]
+                lettera = True
+       
+        ritorno = ritorno[::-1]
+    
+        for i in range (0,len(ritorno)):
+            if(ritorno[i]!="*" or lettera2==True):
+                ritorno2=ritorno2+ritorno[i]
+                lettera2 = True
+    
+        return ritorno2[::-1]
+    
+    @staticmethod
     def get_md5(filename):
         md5 = hashlib.md5()
         with open(filename,"rb") as f:
@@ -84,3 +119,5 @@ class Util:
                     break
         md5_res = md5.digest()
         return md5_res
+    
+    

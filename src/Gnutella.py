@@ -36,6 +36,7 @@ class Gnutella:
         #pulisco DB quando esco
         os.kill(os.getppid(), signal.SIGKILL)
         
+        
     else: #gestisco funzionalita server 
         s = Server.Server.initServerSocket()
         while 1:
