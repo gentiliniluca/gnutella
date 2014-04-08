@@ -91,6 +91,9 @@ class Server:
                 if(int(ttl)==1):
                     stringa_risposta = "ANEA" + pktid + Util.HOST + Util.Util.adattaStringa(5, str(Util.PORT))
                     print("\t\t\t\t\t\t\t\t\trispondo con " + stringa_risposta)
+                    sockr = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                    sockr.connect((ipp2p, int(pp2p)))
+                    sockr.send(stringa_risposta.encode())
                 
         finally:            
             conn_db.esegui_commit()
@@ -171,6 +174,9 @@ class Server:
             else:
                 if(int(ttl)==1):
                     conn_db = Connessione.Connessione()
+                    files = []
+                    files = FileService.FileService.getFiles(conn_db.crea_cursore(), ricerca)
+                    i = 0
                     while i < len(files):
                         print ("\t\t\t\t\t\t\t\t\tinoltro file al richiedente****" + " " + files[i].filemd5 + " " + files[i].filename)
 
@@ -180,8 +186,6 @@ class Server:
                         sock.send(stringa_risposta) #attenzione enconde
                         sock.close()
                         i = i + 1
-                conn_db.esegui_commit()
-                conn_db.chiudi_connessione()
         
         finally:
             conn_db.esegui_commit()
