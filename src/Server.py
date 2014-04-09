@@ -81,7 +81,7 @@ class Server:
                             stringa_ricevuta_server = "NEAR" + pktid + ipp2p + Util.Util.adattaStringa(5, str(pp2p)) + Util.Util.adattaStringa(2, str(ttl))
                             sock.send(stringa_ricevuta_server.encode())
                         except:
-                            print("Il vicino "+vicini[i].pp2p + " non e' online")
+                            print("Il vicino " +vicini[i].ipp2p+"  "+vicini[i].pp2p + " non e' online")
                     i = i + 1
                     
                 stringa_risposta = "ANEA" + pktid + Util.HOST + Util.Util.adattaStringa(5, str(Util.PORT))
@@ -142,6 +142,8 @@ class Server:
         except:
 
             pkt = PacketService.PacketService.insertNewPacket(conn_db.crea_cursore(), pktid)
+            conn_db.esegui_commit()
+            conn_db.chiudi_connessione()
             print("\t\t\t\t\t\t\t\t\t Ricerca file - pkt non presente, se ttl > 0 invio  * valore ttl= "+str(ttl))
             if(int(ttl) > 1):
                 conn_db = Connessione.Connessione()
@@ -176,7 +178,7 @@ class Server:
                             sock.send(stringa_ricevuta_server.encode())
                             #chiudere socket????? sock.cloese()
                         except:
-                            print("Il vicino "+vicini[i].pp2p + " non e' online")
+                            print("Il vicino " +vicini[i].ipp2p+"  "+vicini[i].pp2p + " non e' online")
                     i = i + 1
             else:
                 if(int(ttl)==1):
@@ -235,12 +237,13 @@ class Server:
                 nChunk = os.stat(Util.LOCAL_PATH + file.filename).st_size // chunkLength
             else:
                 nChunk = (os.stat(Util.LOCAL_PATH + file.filename).st_size // chunkLength) + 1
-                
+            
             nChunk = str(nChunk).zfill(6)
             sendingString = "ARET".encode()
             sendingString = sendingString + nChunk.encode()
             
             openedFile = open(Util.LOCAL_PATH + file.filename, "rb")
+
             while True:
                 chunk = openedFile.read(chunkLength)
                 if len(chunk) == chunkLength:
