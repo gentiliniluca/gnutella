@@ -132,7 +132,7 @@ class Server:
         ttl = stringa_ricevuta_server[64:66]
         ricerca_con_spazi = stringa_ricevuta_server[66:86]
         ricerca = Util.Util.elimina_spazi_iniziali_finali(stringa_ricevuta_server[66:86])
-        ricerca = Util.Util.elimina_asterischi_iniziali_finali(stringa_ricevuta_server[66:86])
+        ricerca = Util.Util.elimina_asterischi_iniziali_finali(ricerca)
         
        
         conn_db = Connessione.Connessione()
