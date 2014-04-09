@@ -3,24 +3,14 @@ import hashlib
 class Util:
     
     global HOST
-<<<<<<< HEAD
-    HOST = "fd00:0000:0000:0000:ac39:bcc5:55fd:c66e"
-    global PORT
-    PORT = 3333
-=======
     HOST = "fd00:0000:0000:0000:6860:dec1:27e9:6403"#1dd3:234b:b49a:d734"
     global PORT
     PORT = 3332
->>>>>>> e70d3eb37057dbf05c5cb69af9faa3ac2cd9adff
     
     global USERNAME
     USERNAME = "p2pAdmin"
     global PASSWORD
-<<<<<<< HEAD
     PASSWORD = "p2pAdmin"
-=======
-    PASSWORD = "lorenzo91"
->>>>>>> e70d3eb37057dbf05c5cb69af9faa3ac2cd9adff
     
     global TTL
     TTL = 3
