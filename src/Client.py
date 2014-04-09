@@ -48,9 +48,12 @@ class Client:
         i = 0
         while i < len(vicini):
             #print("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
-            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-            sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
-            sock.send(stringa_da_trasmettere.encode())
+            try:
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)))
+                sock.send(stringa_da_trasmettere.encode())
+            except:
+                print("Il vicino "+vicini[i].ipp2p+" "+vicini[i].pp2p + " non e' online")
             i = i + 1
             
         conn_db.esegui_commit()
@@ -70,57 +73,60 @@ class Client:
             i = i + 1
         
         #il valore di choice e' incrementato di uno
-        choice = int(raw_input("\t  Scegliere il numero del peer da cui scaricare: ")) 
-        sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)        
-        sock.connect((searchResults[choice - 1].ipp2p, int(searchResults[choice - 1].pp2p)))
-        sendingString = "RETR" + searchResults[choice - 1].filemd5
-        #sock.send(sendingString.encode())
-        sock.send(sendingString)
-        
-        receivedString = sock.recv(10)        
-        if receivedString[0:4].decode() == "ARET":
-            nChunk = int(receivedString[4:10].decode())            
-            chunk = bytes()
-            chunkCounter = 0
-            
-            file = open(Util.LOCAL_PATH + searchResults[choice - 1].filename, "wb")
-            
-            while chunkCounter < nChunk:
-                receivedString = sock.recv(1024)
-                chunk = chunk + receivedString                
+        choice = int(raw_input("\t  Scegliere il numero del peer da cui scaricare (0 annulla): ")) 
+        if(choice > 0):
+            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)        
+            sock.connect((searchResults[choice - 1].ipp2p, int(searchResults[choice - 1].pp2p)))
+            sendingString = "RETR" + searchResults[choice - 1].filemd5
+            #sock.send(sendingString.encode())
+            sock.send(sendingString)
+
+            receivedString = sock.recv(10)        
+            if receivedString[0:4].decode() == "ARET":
+                nChunk = int(receivedString[4:10].decode())            
+                chunk = bytes()
+                chunkCounter = 0
+
+                file = open(Util.LOCAL_PATH + searchResults[choice - 1].filename, "wb")
                 
-                
+                #inizializzo la variabile temporanea per stampre la percentuale
                 tmp = -1
-                while True:
-                    perCent = chunkCounter*100//nChunk
-                    if(perCent % 10 == 0 and tmp != perCent):
-                        print str(perCent) + "% "
-                        tmp = int(perCent)
-                        print "tmp: ", tmp
-                    
-                    if len(chunk[:5]) >=  5:
-                        chunkLength = int(chunk[:5])
-                    else:
-                        break
-                    
-                    if len(chunk[5:]) >= chunkLength:
-                        data = chunk[5:5 + chunkLength]
-                        file.write(data)
-                        chunkCounter = chunkCounter + 1
-                        chunk = chunk[5 + chunkLength:]
-                    else:
-                        break
-                    
-            file.close()
-            
-        sock.close()
-        
-        print ""
-        
-        #controllo correttezza del download
-        myMd5 = Util.Util.md5(Util.LOCAL_PATH + searchResults[choice - 1].filename)        
-        if myMd5 != searchResults[choice - 1].filemd5:
-            print("Errore nel download del file, gli md5 sono diversi!")  
+                
+                while chunkCounter < nChunk:
+                    receivedString = sock.recv(1024)
+                    chunk = chunk + receivedString                
+
+                    while True:
+                        
+                        perCent = chunkCounter*100//nChunk
+                        if(perCent % 10 == 0 and tmp != perCent):
+                            print str(perCent) + "% "
+                            tmp = perCent
+                            print "tmp: ", tmp
+                        
+                        if len(chunk[:5]) >=  5:
+                            chunkLength = int(chunk[:5])
+                        else:
+                            break
+
+                        if len(chunk[5:]) >= chunkLength:
+                            data = chunk[5:5 + chunkLength]
+                            file.write(data)
+                            chunkCounter = chunkCounter + 1
+                            chunk = chunk[5 + chunkLength:]
+                        else:
+                            break
+
+                file.close()
+
+            sock.close() 
+
+            #controllo correttezza del download
+            myMd5 = Util.Util.md5(Util.LOCAL_PATH + searchResults[choice - 1].filename)        
+            if myMd5 != searchResults[choice - 1].filemd5:
+                print("Errore nel download del file, gli md5 sono diversi!")  
+        else:
+            print("Annullato")
             
     @staticmethod
     def searchHandler():
@@ -130,7 +136,9 @@ class Client:
                 break
             print("\n\tErrore lunghezza query maggiore di 20!")
                 
-        query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca, 20)
+        #query_ricerca = Util.Util.aggiungi_spazi_finali(query_ricerca, 20)
+        query_ricerca = Util.Util.riempi_stringa(query_ricerca, 20)
+        
         #print(query_ricerca)                
             
         #pulisco la tabella searchresult, questa operazione va fatta prima di ogni ricerca
@@ -155,9 +163,12 @@ class Client:
         i = 0
         while i < len(vicini):
             #print ("****" +" "+vicini[i].pp2p + " "+vicini[i].ipp2p)
-            sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-            sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
-            sock.send(stringa_da_trasmettere.encode())
+            try:
+                sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                sock.connect((vicini[i].ipp2p, int(vicini[i].pp2p)) )
+                sock.send(stringa_da_trasmettere.encode())
+            except:
+                print("Il vicino "+vicini[i].ipp2p+" "+vicini[i].pp2p + " non e' online")
             i = i + 1
             
         conn_db.esegui_commit()
@@ -171,7 +182,7 @@ class Client:
         filemd5 = Util.Util.get_md5(Util.LOCAL_PATH + nomefile)
         print("md5: " + filemd5 + " nome: " + nomefile)
         nomefile = Util.Util.aggiungi_spazi_finali(nomefile,100)
-        
+        #nomefile = Util.Util.riempi_stringa(nomefile, 100)
         file = FileService.FileService.insertNewFile(conn_db.crea_cursore(), filemd5, nomefile)
         
         conn_db.esegui_commit()
