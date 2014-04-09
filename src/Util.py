@@ -3,7 +3,7 @@ import hashlib
 class Util:
     
     global HOST
-    HOST = "fd00:0000:0000:0000:055f:8b05:85a9:a02d"
+    HOST = "fd00:0000:0000:0000:6860:dec1:27e9:6403"#1dd3:234b:b49a:d734"
     global PORT
     PORT = 3332
     
@@ -13,7 +13,7 @@ class Util:
     PASSWORD = "lorenzo91"
     
     global TTL
-    TTL = 2
+    TTL = 3
     
     global MAX_NEARS
     MAX_NEARS = 2
