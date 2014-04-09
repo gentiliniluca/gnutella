@@ -99,6 +99,7 @@ class Client:
 
                     while True:
                         
+                        #Un po' di piacere per gli occhi...
                         perCent = chunkCounter*100//nChunk
                         if(perCent % 10 == 0 and tmp != perCent):
                             if(tmp != -1):
