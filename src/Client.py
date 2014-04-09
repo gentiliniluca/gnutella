@@ -89,7 +89,15 @@ class Client:
                 receivedString = sock.recv(1024)
                 chunk = chunk + receivedString                
                 
+                
+                tmp = -1
                 while True:
+                    perCent = chunkCounter*100//nChunk
+                    if(perCent % 10 == 0 and tmp != perCent):
+                        print str(perCent) + "% "
+                        tmp = int(perCent)
+                        print "tmp: ", tmp
+                    
                     if len(chunk[:5]) >=  5:
                         chunkLength = int(chunk[:5])
                     else:
@@ -105,7 +113,9 @@ class Client:
                     
             file.close()
             
-        sock.close() 
+        sock.close()
+        
+        print ""
         
         #controllo correttezza del download
         myMd5 = Util.Util.md5(Util.LOCAL_PATH + searchResults[choice - 1].filename)        
