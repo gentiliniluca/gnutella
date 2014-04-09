@@ -91,6 +91,7 @@ class Client:
                 
                 #inizializzo la variabile temporanea per stampre la percentuale
                 tmp = -1
+                print "\nDownloading...\t",
                 
                 while chunkCounter < nChunk:
                     receivedString = sock.recv(1024)
@@ -100,9 +101,10 @@ class Client:
                         
                         perCent = chunkCounter*100//nChunk
                         if(perCent % 10 == 0 and tmp != perCent):
-                            print str(perCent) + "% "
+                            if(tmp != -1):
+                                print " - ",
+                            print str(perCent) + "%",
                             tmp = perCent
-                            print "tmp: ", tmp
                         
                         if len(chunk[:5]) >=  5:
                             chunkLength = int(chunk[:5])
@@ -118,6 +120,7 @@ class Client:
                             break
 
                 file.close()
+                print ""
 
             sock.close() 
 
